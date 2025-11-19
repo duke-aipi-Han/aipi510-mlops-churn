@@ -1,0 +1,37 @@
+data:
+  local_raw_path: "data/raw/telco_churn_raw.csv"
+  local_clean_path: "data/clean/telco_churn_clean.csv"
+  azure_container: "ml-data"
+  azure_clean_blob_name: "telco_churn_clean.csv"
+
+split:
+  train_fraction: 0.7
+  val_fraction: 0.15
+  test_fraction: 0.15
+  random_state: 42
+
+model:
+  type: "xgboost"
+  params:
+    n_estimators: 200
+    max_depth: 6
+    learning_rate: 0.1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    objective: "binary:logistic"
+    eval_metric: "logloss"
+
+wandb:
+  use_wandb: true
+  project_name: "azure-churn-mlops"
+  entity: null
+
+azure:
+  blob_connection_string_env_var: "AZURE_BLOB_CONNECTION_STRING"
+  model_container: "ml-models"
+  model_blob_name: "xgboost_churn_model.json"
+  preprocessor_blob_name: "preprocessor.pkl"
+
+api:
+  host: "0.0.0.0"
+  port: 8000
