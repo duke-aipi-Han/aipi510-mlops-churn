@@ -23,13 +23,7 @@ def _prepare(df: pd.DataFrame):
 
 
 def evaluate(model_path: Path, preprocessor_path: Path, df: pd.DataFrame) -> Dict[str, float]:
-    model = joblib.load(model_path) if model_path.suffix != ".json" else None
-    if model is None:
-        # When saved via xgboost native format
-        from xgboost import XGBClassifier
-
-        model = XGBClassifier()
-        model.load_model(model_path)
+    model = joblib.load(model_path)
     preprocessor = joblib.load(preprocessor_path)
     X, y = _prepare(df)
     X_proc = apply_preprocessor(preprocessor, X)

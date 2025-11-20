@@ -4,7 +4,7 @@ from typing import Optional
 import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
-from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 from src.config import load_config
 from src.schemas import ChurnRequest, ChurnResponse
@@ -16,7 +16,7 @@ logger = get_logger(__name__)
 
 app = FastAPI(title="Telco Churn Prediction API")
 
-model: Optional[XGBClassifier] = None
+model: Optional[RandomForestClassifier] = None
 preprocessor = None
 config = load_config()
 
@@ -38,9 +38,7 @@ def _load_model_artifacts() -> None:
             config["azure"]["model_container"], preprocessor_path.name, preprocessor_path
         )
 
-    xgb_model = XGBClassifier()
-    xgb_model.load_model(model_path)
-    model = xgb_model
+    model = joblib.load(model_path)
     preprocessor = joblib.load(preprocessor_path)
     logger.info("Artifacts loaded into memory")
 

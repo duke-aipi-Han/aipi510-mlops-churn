@@ -3,9 +3,8 @@ uvicorn[standard]
 pandas
 numpy
 scikit-learn
-xgboost
 pyyaml
-python-dotenv
+dotenv
 azure-storage-blob
 wandb
 

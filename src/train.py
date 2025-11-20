@@ -1,12 +1,13 @@
 from pathlib import Path
 from typing import Dict, Tuple
+from dotenv import load_dotenv
 
 import joblib
 import numpy as np
 import pandas as pd
 from sklearn.metrics import accuracy_score, log_loss, roc_auc_score
 from sklearn.model_selection import train_test_split
-from xgboost import XGBClassifier
+from sklearn.ensemble import RandomForestClassifier
 
 from src.config import load_config
 from src.preprocessing import build_preprocessor, apply_preprocessor, TARGET_COL
@@ -41,7 +42,7 @@ def _split_data(X: pd.DataFrame, y: pd.Series, split_cfg: Dict) -> tuple:
     return X_train, X_val, X_test, y_train, y_val, y_test
 
 
-def _evaluate(model: XGBClassifier, X, y) -> Dict[str, float]:
+def _evaluate(model, X, y) -> Dict[str, float]:
     proba = model.predict_proba(X)[:, 1]
     preds = (proba >= 0.5).astype(int)
     metrics = {
@@ -54,6 +55,7 @@ def _evaluate(model: XGBClassifier, X, y) -> Dict[str, float]:
 
 def main() -> Dict[str, float]:
     config = load_config()
+    load_dotenv()
 
     clean_path = Path(config["data"]["local_clean_path"])
     if not clean_path.exists():
@@ -77,8 +79,8 @@ def main() -> Dict[str, float]:
     X_test_processed = apply_preprocessor(preprocessor, X_test)
 
     model_params = config["model"]["params"]
-    model = XGBClassifier(**model_params, n_jobs=4)
-    model.fit(X_train_processed, y_train, eval_set=[(X_val_processed, y_val)], verbose=False)
+    model = RandomForestClassifier(**model_params)
+    model.fit(X_train_processed, y_train)
 
     metrics = {
         "train": _evaluate(model, X_train_processed, y_train),
@@ -95,7 +97,7 @@ def main() -> Dict[str, float]:
     model_path = models_dir / config["azure"]["model_blob_name"]
     preprocessor_path = models_dir / config["azure"]["preprocessor_blob_name"]
 
-    model.save_model(model_path)
+    joblib.dump(model, model_path)
     joblib.dump(preprocessor, preprocessor_path)
     logger.info("Saved model to %s and preprocessor to %s", model_path, preprocessor_path)
 

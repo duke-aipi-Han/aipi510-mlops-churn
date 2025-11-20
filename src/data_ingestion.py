@@ -1,6 +1,16 @@
 from pathlib import Path
+import sys
+from dotenv import load_dotenv
 
 import pandas as pd
+
+# Allow running the script directly (e.g., `python src/data_ingestion.py`) by
+# adding the repository root to the import path so `src.*` imports resolve.
+REPO_ROOT = Path(__file__).resolve().parents[1]
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+load_dotenv()
 
 from src.config import load_config
 from src.utils.azure_utils import upload_file_to_blob
