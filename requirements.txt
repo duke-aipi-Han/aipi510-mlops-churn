@@ -7,6 +7,7 @@ pyyaml
 dotenv
 azure-storage-blob
 wandb
+xgboost
 
 # Dev
 black

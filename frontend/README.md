@@ -5,6 +5,7 @@ This React app sends customer details to the FastAPI `/predict` endpoint and dis
 ## Setup
 
 ```bash
+# "brew install node" if Node.js that includes npm is not installed
 cd frontend
 npm install
 ```

@@ -4,6 +4,7 @@ from typing import Optional
 import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sklearn.ensemble import RandomForestClassifier
 
 from src.config import load_config
@@ -15,6 +16,13 @@ from src.utils.logging_utils import get_logger
 logger = get_logger(__name__)
 
 app = FastAPI(title="Telco Churn Prediction API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 model: Optional[RandomForestClassifier] = None
 preprocessor = None

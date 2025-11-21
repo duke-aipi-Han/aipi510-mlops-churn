@@ -13,7 +13,7 @@ Predict Telco customer churn with an XGBoost model, track experiments in Weights
           v                               |
 +---------+----------+           +--------+--------+
 | Azure Blob Storage |<----------+  Train pipeline |
-| raw/clean/model    |           |  XGBoost + SKL  |
+| raw/clean/model    |           |  Random Forest  |
 +---------+----------+           +-----------------+
           |                                   |
           v                                   v
@@ -35,7 +35,7 @@ Telco Customer Churn (Kaggle). Download the CSV from Kaggle and place it at `dat
    python -m venv .venv
    source .venv/bin/activate  # or .venv\Scripts\activate on Windows
    pip install -r requirements.txt
-   cp .env.example .env
+   .env
    # fill AZURE_BLOB_CONNECTION_STRING and WANDB_API_KEY
    ```
 2. **Clean data**
@@ -91,9 +91,10 @@ docker run --env-file .env -p 8000:8000 aipi510-mlops-churn
 
 ### Azure Container Registry (ACR)
 ```bash
-az acr login --name <registry>
-docker tag aipi510-mlops-churn <registry>.azurecr.io/aipi510-mlops-churn:latest
-docker push <registry>.azurecr.io/aipi510-mlops-churn:latest
+az login
+az acr login --name aipi10containerregistry
+docker tag aipi510-mlops-churn aipi10containerregistry.azurecr.io/aipi510-mlops-churn:latest
+docker push aipi10containerregistry.azurecr.io/aipi510-mlops-churn:latest
 ```
 
 ### Azure Container Apps

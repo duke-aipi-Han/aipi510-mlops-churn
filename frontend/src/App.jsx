@@ -22,7 +22,7 @@ const initialForm = {
   total_charges: 840.0,
 }
 
-const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+const apiBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/$/, '')
 
 export default function App() {
   const [form, setForm] = useState(initialForm)
