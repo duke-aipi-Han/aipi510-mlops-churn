@@ -22,13 +22,15 @@ const initialForm = {
   total_charges: 840.0,
 }
 
-const apiBase = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000').replace(/\/$/, '')
+const apiBaseValue = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+const apiBase = apiBaseValue.replace(/\/$/, '')
 
 export default function App() {
   const [form, setForm] = useState(initialForm)
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState(null)
+  const [errorDetail, setErrorDetail] = useState(null)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -39,6 +41,7 @@ export default function App() {
     e.preventDefault()
     setLoading(true)
     setError(null)
+    setErrorDetail(null)
     setResult(null)
     try {
       const response = await fetch(`${apiBase}/predict`, {
@@ -52,7 +55,14 @@ export default function App() {
           total_charges: Number(form.total_charges),
         }),
       })
-      if (!response.ok) throw new Error('Prediction failed')
+      if (!response.ok) {
+        const detail = await response.json().catch(async () => {
+          const text = await response.text().catch(() => '')
+          return { detail: text }
+        })
+        const message = detail?.detail || `Prediction failed (${response.status})`
+        throw new Error(message)
+      }
       const data = await response.json()
       setResult({
         probability: data.churn_probability,
@@ -60,7 +70,24 @@ export default function App() {
         category: data.churn_probability >= 0.7 ? 'High' : data.churn_probability >= 0.4 ? 'Medium' : 'Low',
       })
     } catch (err) {
-      setError(err.message)
+      const errorName = err?.name || 'Error'
+      const baseMessage = err?.message || 'Unknown error'
+      let detailedMessage = `${errorName}: ${baseMessage}`
+      if (errorName === 'TypeError') {
+        detailedMessage +=
+          ' — Browser could not reach the API. Verify the URL is correct, HTTPS is enabled, and CORS/network rules allow this origin.'
+      }
+      setError(detailedMessage)
+      const detailLines = [
+        `Request URL: ${apiBase}/predict`,
+        `API base env value: ${apiBaseValue}`,
+        `Window origin: ${typeof window !== 'undefined' ? window.location.origin : 'n/a'}`,
+        `navigator.onLine: ${typeof navigator !== 'undefined' ? navigator.onLine : 'n/a'}`,
+      ]
+      if (err?.stack) {
+        detailLines.push(`Stack: ${err.stack}`)
+      }
+      setErrorDetail(detailLines.join('\n'))
     } finally {
       setLoading(false)
     }
@@ -71,6 +98,9 @@ export default function App() {
       <div className="card">
         <h1>Telco Churn Predictor</h1>
         <p>Enter customer details to estimate churn probability.</p>
+        <p className="env-info">
+          API URL (<code>VITE_API_BASE_URL</code>): <span>{apiBaseValue}</span>
+        </p>
         <form onSubmit={handleSubmit}>
           <label>
             Gender
@@ -208,7 +238,17 @@ export default function App() {
             {loading ? 'Predicting…' : 'Predict churn'}
           </button>
         </form>
-        {error && <div className="result">Error: {error}</div>}
+        {error && (
+          <div className="result">
+            <p>{error}</p>
+            {errorDetail && (
+              <>
+                <p>Diagnostics</p>
+                <pre>{errorDetail}</pre>
+              </>
+            )}
+          </div>
+        )}
         {result && (
           <div className="result">
             <p>Churn probability: {(result.probability * 100).toFixed(2)}%</p>

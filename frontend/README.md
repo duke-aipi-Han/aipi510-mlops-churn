@@ -32,7 +32,7 @@ Set `VITE_API_BASE_URL` in a `.env` file at the project root (same directory as 
 VITE_API_BASE_URL=https://your-container-app-url
 ```
 
-## Deploy to Azure Static Web Apps (high-level)
+## Deploy to Azure Static Web Apps
 
 1. Create a Static Web App resource.
 2. Build command: `npm run build`. Output folder: `dist`.
