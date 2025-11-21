@@ -8,6 +8,8 @@ dotenv
 azure-storage-blob
 wandb
 xgboost
+lightgbm
+catboost
 
 # Dev
 black
