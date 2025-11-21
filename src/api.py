@@ -28,6 +28,25 @@ model: Optional[RandomForestClassifier] = None
 preprocessor = None
 config = load_config()
 
+REQUEST_TO_TRAINING_COLUMNS = {
+    "senior_citizen": "seniorcitizen",
+    "phone_service": "phoneservice",
+    "multiple_lines": "multiplelines",
+    "internet_service": "internetservice",
+    "online_security": "onlinesecurity",
+    "online_backup": "onlinebackup",
+    "device_protection": "deviceprotection",
+    "tech_support": "techsupport",
+    "streaming_tv": "streamingtv",
+    "streaming_movies": "streamingmovies",
+    "paperless_billing": "paperlessbilling",
+    "payment_method": "paymentmethod",
+    "monthly_charges": "monthlycharges",
+    "total_charges": "totalcharges",
+}
+
+CUSTOMER_ID_PLACEHOLDER = "local-client"
+
 
 def _load_model_artifacts() -> None:
     global model, preprocessor
@@ -67,6 +86,12 @@ def predict_churn(payload: ChurnRequest):
         raise HTTPException(status_code=500, detail="Model artifacts not loaded")
 
     data = pd.DataFrame([payload.model_dump()])
+    # Align request columns with the training/preprocessor feature names.
+    data = data.rename(columns=REQUEST_TO_TRAINING_COLUMNS)
+    if "customerid" not in data.columns:
+        # Training pipeline retained customerid, so supply a placeholder that will be ignored
+        # by the OneHotEncoder (handle_unknown="ignore").
+        data["customerid"] = CUSTOMER_ID_PLACEHOLDER
 
     try:
         transformed = apply_preprocessor(preprocessor, data)
