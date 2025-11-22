@@ -1,6 +1,6 @@
-# AIPI510 MLOps Churn Starter
+# AIPI510 MLOps Churn
 
-Predict Telco customer churn with an XGBoost model, track experiments in Weights & Biases, serve a FastAPI REST API in Docker/Azure Container Apps, and ship a React frontend to Azure Static Web Apps. Use this starter as a teaching scaffold to explore the full ML lifecycle end-to-end.
+Predict Telco customer churn with an ML model, track experiments in Weights & Biases, serve a FastAPI REST API in Docker hosted on Azure Container Apps, and ship a React frontend to Azure Static Web Apps.
 
 ## Architecture
 
@@ -13,7 +13,7 @@ Predict Telco customer churn with an XGBoost model, track experiments in Weights
           v                               |
 +---------+----------+           +--------+--------+
 | Azure Blob Storage |<----------+  Train pipeline |
-| raw/clean/model    |           |  Random Forest  |
+| raw/clean/model    |           |  ML Model.      |
 +---------+----------+           +-----------------+
           |                                   |
           v                                   v
@@ -26,7 +26,8 @@ Predict Telco customer churn with an XGBoost model, track experiments in Weights
 
 ## Dataset
 
-Telco Customer Churn (Kaggle). Download the CSV from Kaggle and place it at `data/raw/telco_churn_raw.csv`. The cleaning script standardizes column names, coerces `TotalCharges` to numeric, drops missing rows, and writes `data/clean/telco_churn_clean.csv` (also uploaded to Azure Blob Storage).
+Telco Customer Churn (Kaggle). https://www.kaggle.com/datasets/blastchar/telco-customer-churn
+Download the CSV from Kaggle and place it at `data/raw/telco_churn_raw.csv`. The cleaning script standardizes column names, coerces `TotalCharges` to numeric, drops missing rows, and writes `data/clean/telco_churn_clean.csv` (also uploaded to Azure Blob Storage).
 
 ## Quickstart (local)
 
@@ -35,8 +36,7 @@ Telco Customer Churn (Kaggle). Download the CSV from Kaggle and place it at `dat
    python -m venv .venv
    source .venv/bin/activate  # or .venv\Scripts\activate on Windows
    pip install -r requirements.txt
-   .env
-   # fill AZURE_BLOB_CONNECTION_STRING and WANDB_API_KEY
+   # create a .env and fill AZURE_BLOB_CONNECTION_STRING and WANDB_API_KEY
    ```
 2. **Clean data**
    ```bash
@@ -66,10 +66,11 @@ See `config.yaml` for paths, split fractions, model hyperparameters, W&B, Azure 
 
 ## Training
 
-`src/train.py` loads config, downloads clean data if missing, splits train/val/test based on config fractions, builds a ColumnTransformer (one-hot + scaling), trains an XGBoost classifier, evaluates, logs metrics to W&B, saves artifacts to `models/`, and uploads model/preprocessor to Azure Blob Storage.
+`src/train.py` loads config, downloads clean data if missing, splits train/val/test based on config fractions, builds a ColumnTransformer (one-hot + scaling), trains a classifier, evaluates, logs metrics to W&B, saves artifacts to `models/`, and uploads model/preprocessor to Azure Blob Storage.
 
 ## Serving (FastAPI)
 
+run locoally using uvicorn
 `src/api.py` loads artifacts from Azure on startup and exposes:
 - `GET /` health check
 - `POST /predict` accepting a JSON body defined in `src/schemas.py`, returning churn probability and label.
@@ -113,10 +114,6 @@ docker push aipi10containerregistry.azurecr.io/aipi510-mlops-churn:latest
 - Set `WANDB_API_KEY` in `.env`.
 - Training logs metrics (`train/val/test` accuracy, ROC-AUC, log-loss) and config automatically.
 
-## Ethical considerations
-
-Churn models can reinforce unfair treatment (e.g., aggressive retention offers only to certain demographics). Monitor feature importance, audit bias across groups, and avoid using protected attributes or proxies in decisioning without policy review. Communicate limitations and ensure opt-out mechanisms where appropriate.
-
 ## Branching / PR guide
 
 - Create feature branches from `main`.
@@ -132,3 +129,7 @@ Churn models can reinforce unfair treatment (e.g., aggressive retention offers o
 - `notebooks/`: exploratory notebooks
 - `frontend/`: Vite React client
 - `Dockerfile`, `config.yaml`, `.env.example`, `requirements.txt`
+
+# Deployment URLs
+Front End: https://calm-bay-0e650a80f.3.azurestaticapps.net
+API: https://aipi510-mlops-docker.yellowbeach-ce54c696.eastus2.azurecontainerapps.io/ 
