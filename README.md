@@ -129,3 +129,7 @@ docker push aipi10containerregistry.azurecr.io/aipi510-mlops-churn:latest
 - `notebooks/`: exploratory notebooks
 - `frontend/`: Vite React client
 - `Dockerfile`, `config.yaml`, `.env.example`, `requirements.txt`
+
+# Deployment URLs
+Front End: https://calm-bay-0e650a80f.3.azurestaticapps.net
+API: https://aipi510-mlops-docker.yellowbeach-ce54c696.eastus2.azurecontainerapps.io/ 
