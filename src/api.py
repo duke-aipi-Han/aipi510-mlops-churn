@@ -47,7 +47,9 @@ REQUEST_TO_TRAINING_COLUMNS = {
 
 CUSTOMER_ID_PLACEHOLDER = "local-client"
 
-
+"""
+Load model and preprocessor from Azure Blob Storage if not present locally.
+"""
 def _load_model_artifacts() -> None:
     global model, preprocessor
     models_dir = Path("models")

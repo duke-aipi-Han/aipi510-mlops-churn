@@ -1,13 +1,14 @@
 # AIPI510 MLOps Churn
 
-Predict Telco customer churn with an ML model, track experiments in Weights & Biases, serve a FastAPI REST API in Docker hosted on Azure Container Apps, and ship a React frontend to Azure Static Web Apps.
+Predict Telco customer churn with an ML model, track experiments in Weights & Biases, serve a FastAPI REST API in Docker hosted on Azure Container Apps, UI with a React frontend on Azure Static Web Apps.
 
 ## Architecture
 
 ```
 +--------------------+          +-------------------+
 |  Local / Notebooks |          |   Weights & Biases|
-|  data cleaning     |          |   metrics & runs  |
+|  data cleaning.    |
+|. loading, EDA      |          |   metrics & runs  |
 +---------+----------+          +---------+---------+
           |                               ^
           v                               |

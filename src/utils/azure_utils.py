@@ -18,9 +18,10 @@ def _get_blob_service_client() -> BlobServiceClient:
         raise EnvironmentError(f"Azure blob connection string not found in env var {env_var}")
     return BlobServiceClient.from_connection_string(connection_string)
 
-
+"""
+Helper function to download a blob to a local file path.
+"""
 def download_blob_to_file(container: str, blob_name: str, local_path: str | Path) -> Path:
-    """Download a blob to a local file path."""
     local_path = Path(local_path)
     client = _get_blob_service_client()
     blob_client = client.get_container_client(container).get_blob_client(blob_name)
@@ -31,9 +32,10 @@ def download_blob_to_file(container: str, blob_name: str, local_path: str | Path
     logger.info("Downloaded %s to %s", blob_name, local_path)
     return local_path
 
-
+"""
+Helper function to upload a local file to Azure Blob Storage.
+"""
 def upload_file_to_blob(container: str, blob_name: str, local_path: str | Path) -> None:
-    """Upload a local file to Azure Blob Storage."""
     local_path = Path(local_path)
     if not local_path.exists():
         raise FileNotFoundError(f"Local path {local_path} not found for upload")

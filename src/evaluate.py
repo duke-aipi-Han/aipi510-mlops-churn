@@ -21,7 +21,9 @@ def _prepare(df: pd.DataFrame):
     X = df.drop(columns=[TARGET_COL])
     return X, y
 
-
+"""
+Evaluate the trained model on the cleaned dataset.
+"""
 def evaluate(model_path: Path, preprocessor_path: Path, df: pd.DataFrame) -> Dict[str, float]:
     model = joblib.load(model_path)
     preprocessor = joblib.load(preprocessor_path)

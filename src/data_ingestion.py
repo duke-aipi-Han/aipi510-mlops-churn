@@ -18,9 +18,11 @@ from src.utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 
-
+"""
+Minimal cleaning for Telco Customer Churn dataset. Just standardize column names and
+convert TotalCharges to numeric, dropping rows with missing values.
+"""
 def clean_telco_dataset(df: pd.DataFrame) -> pd.DataFrame:
-    """Minimal cleaning for Telco Customer Churn dataset."""
     df = df.copy()
     df.columns = [c.strip().lower().replace(" ", "_") for c in df.columns]
     if "totalcharges" in df.columns:

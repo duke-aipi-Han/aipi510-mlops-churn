@@ -1,6 +1,8 @@
 from pydantic import BaseModel, Field
 
-
+"""
+Schemas for churn prediction requests and responses as a Class
+"""
 class ChurnRequest(BaseModel):
     gender: str = Field(..., description="Customer gender")
     senior_citizen: int = Field(..., ge=0, le=1)

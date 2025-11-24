@@ -1,5 +1,5 @@
 fastapi
-uvicorn[standard]
+uvicorn
 pandas
 numpy
 scikit-learn
@@ -10,8 +10,3 @@ wandb
 xgboost
 lightgbm
 catboost
-
-# Dev
-black
-flake8
-isort

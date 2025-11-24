@@ -4,9 +4,10 @@ from typing import Optional
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
-
+"""
+Helper function to Return a simple application logger.
+"""
 def get_logger(name: Optional[str] = None) -> logging.Logger:
-    """Return a simple application logger."""
     logger = logging.getLogger(name)
     if not logger.handlers:
         handler = logging.StreamHandler()

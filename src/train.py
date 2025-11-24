@@ -52,7 +52,9 @@ def _evaluate(model, X, y) -> Dict[str, float]:
     }
     return metrics
 
-
+"""
+Main training function.
+"""
 def main() -> Dict[str, float]:
     config = load_config()
     load_dotenv()

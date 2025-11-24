@@ -7,9 +7,10 @@ from src.utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 
-
+"""
+Initialize a Weights & Biases run if enabled in config.
+"""
 def init_wandb(config_dict: Dict[str, Any]) -> Optional[wandb.sdk.wandb_run.Run]:
-    """Initialize a Weights & Biases run if enabled in config."""
     if not config_dict.get("wandb", {}).get("use_wandb", False):
         logger.info("W&B disabled in config")
         return None
